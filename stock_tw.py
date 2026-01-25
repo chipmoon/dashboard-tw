@@ -179,7 +179,7 @@ if ket_qua:
     ).round(1)
     df_tab3 = df_tab3.sort_values(by='Điểm (0-100)', ascending=False)
 
-    file_name = f"Phan_Tich_Dong_Tien_TW_{datetime.now().strftime('%Y-%m-%d')}.xlsx"
+    file_name = "Taiwan_Market_Data_Latest.xlsx"
     with pd.ExcelWriter(file_name, engine='openpyxl') as writer:
         df_tab1.to_excel(writer, sheet_name='1_Tin_Hieu_Hom_Nay', index=False)
         df_tab2.to_excel(writer, sheet_name='2_Xu_Huong_21_Ngay', index=False)
