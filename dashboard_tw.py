@@ -12,7 +12,7 @@ st.title("💰 DASHBOARD DÒNG TIỀN THÔNG MINH (SMART MONEY)")
 # Tự động tìm file Excel nằm CÙNG THƯ MỤC với file code này
 current_folder = os.path.dirname(os.path.abspath(__file__))
 # Tìm tất cả file bắt đầu bằng 'Phan_Tich' và kết thúc bằng .xlsx
-pattern = os.path.join(current_folder, "Phan_Tich_Dong_Tien_*.xlsx")
+pattern = os.path.join(current_folder, "Taiwan_Market_Data_Latest_*.xlsx")
 list_files = glob.glob(pattern)
 
 if not list_files:
@@ -135,4 +135,5 @@ with col2:
             }
         )
     else:
+
         st.info("Hôm nay thị trường ảm đạm, không có mã nào bùng nổ đặc biệt.")
