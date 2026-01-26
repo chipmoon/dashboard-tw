@@ -68,9 +68,11 @@ with col1:
     st.subheader(f"1. BẢN ĐỒ DÒNG TIỀN NGÀNH ({unit_label})")
     fig_map = px.treemap(
         df_sector, 
-        path=['Ngành'], 
+        ids='Ngành',
+        labels='Ngành',
+        parents=[''] * len(df_sector),
         values='Thanh_Khoan_Hien_Thi',
-        color='%_Tăng_1_Tháng',
+        color='Avg_%_1Tháng',
         color_continuous_scale='RdYlGn',
         title="Độ lớn ô = Thanh khoản | Màu đỏ = Giảm, Màu xanh = Tăng"
     )
