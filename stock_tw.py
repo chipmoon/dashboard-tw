@@ -420,7 +420,7 @@ if ket_qua:
                 'GTGD_TB_Tỷ': 'sum', 
                 'Mã': 'count'
             }).reset_index()
-            df_sector.columns = ['Ngành', 'Avg_%_1Tháng', 'Avg_Sức_Mạnh', 'Tổng_GTGD_Tỷ', 'Số_Mã']
+            df_sector.columns = ['Ngành', 'Avg_%_1Tháng', 'Avg_Sức_Mạnh', 'GTGD_TB_Tỷ', 'Số_Mã']
             df_sector = df_sector.sort_values(by='Avg_%_1Tháng', ascending=False)
             df_sector.to_excel(
                 writer, sheet_name='3_Song_Nganh', index=False
