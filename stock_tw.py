@@ -402,13 +402,13 @@ if ket_qua:
     try:
         with pd.ExcelWriter(file_name, engine='openpyxl') as writer:
             # Sheet 1: Daily Signals (sorted by volume strength)
-            df_tab1[['Mã', 'Tên Công Ty (CN)', 'Tên Công Ty', 'Giá', '%_Ngày', '%_Vol_vs_TB', 'Tín_Hiệu_Ngày']].to_excel(
+            df_tab1[['Mã', 'Tên Công Ty (CN)', 'Tên Công Ty', 'Giá', '%_Ngày', '%_Vol_vs_TB', 'Tín_Hiệu_Ngày', 'GTGD_TB_Tỷ']].to_excel(
                 writer, sheet_name='1_Tin_Hieu_Hom_Nay', index=False
             )
             logger.debug("✅ Sheet 1 created: 1_Tin_Hieu_Hom_Nay")
             
             # Sheet 2: 21-day Trend (sorted by 1-month gain)
-            df_tab2[['Mã', 'Tên Công Ty (CN)', 'Tên Công Ty', 'Ngành', '%_Tăng_1_Tháng', 'Sức_Mạnh_Dòng_Tiền']].to_excel(
+            df_tab2[['Mã', 'Tên Công Ty (CN)', 'Tên Công Ty', 'Ngành', '%_Tăng_1_Tháng', 'Sức_Mạnh_Dòng_Tiền', 'GTGD_TB_Tỷ']].to_excel(
                 writer, sheet_name='2_Xu_Huong_21_Ngay', index=False
             )
             logger.debug("✅ Sheet 2 created: 2_Xu_Huong_21_Ngay")
