@@ -3,189 +3,113 @@ import yfinance as yf
 from datetime import datetime, timedelta
 import os
 
-# --- CẤU HÌNH DANH SÁCH MÃ & TÊN CÔNG TY (BẢN V4: MEMORY & AI FULL) ---
+# --- 1. CẤU HÌNH DANH SÁCH MÃ MỞ RỘNG (40+ MÃ ĐẦU NGÀNH) ---
 THONG_TIN_CO_PHIEU = {
-    # =================================================================
-    # 💾 NHÓM 1: MEMORY & STORAGE (BỘ NHỚ & LƯU TRỮ) - "Kho lương thực AI"
-    # =================================================================
-    "8299.TWO": {"Ten": "Phison (Electronics)", "Nganh": "Memory - Controller"}, # Trùm Controller SSD
-    "2408.TW": {"Ten": "Nanya Technology", "Nganh": "Memory - DRAM"}, # Sản xuất DRAM lớn nhất ĐL
-    "2344.TW": {"Ten": "Winbond Elec", "Nganh": "Memory - Flash/DRAM"},
-    "2337.TW": {"Ten": "Macronix (MXIC)", "Nganh": "Memory - NOR Flash"}, # Chuyên chip nhớ cho xe hơi/Nintendo
-    "3260.TWO": {"Ten": "ADATA", "Nganh": "Memory - Module"}, # Bán RAM/SSD (Thương mại)
-    "2451.TW": {"Ten": "Transcend Info", "Nganh": "Memory - Module"},
-    "4967.TW": {"Ten": "TeamGroup", "Nganh": "Memory - Module"},
-    "8150.TW": {"Ten": "ChipMOS", "Nganh": "Memory - Packaging"}, # Đóng gói chip nhớ
-    "6239.TW": {"Ten": "PTI (Powertech)", "Nganh": "Memory - Packaging"}, # Đóng gói chip nhớ (Đối tác Micron)
+    # 💾 NHÓM 1: MEMORY & STORAGE
+    "8299.TWO": {"Ten": "Phison (Electronics)", "Ten_CN": "群聯", "Nganh": "Memory - Controller"},
+    "2408.TW": {"Ten": "Nanya Technology", "Ten_CN": "南亞科", "Nganh": "Memory - DRAM"},
+    "2344.TW": {"Ten": "Winbond Elec", "Ten_CN": "華邦電", "Nganh": "Memory - Flash/DRAM"},
+    "2337.TW": {"Ten": "Macronix (MXIC)", "Ten_CN": "旺宏", "Nganh": "Memory - NOR Flash"},
+    "3260.TWO": {"Ten": "ADATA", "Ten_CN": "威剛", "Nganh": "Memory - Module"},
+    "2451.TW": {"Ten": "Transcend Info", "Ten_CN": "創見", "Nganh": "Memory - Module"},
+    "4967.TW": {"Ten": "TeamGroup", "Ten_CN": "十銓", "Nganh": "Memory - Module"},
+    "8150.TW": {"Ten": "ChipMOS", "Ten_CN": "南茂", "Nganh": "Memory - Packaging"},
+    "6239.TW": {"Ten": "PTI (Powertech)", "Ten_CN": "力成", "Nganh": "Memory - Packaging"},
 
-    # =================================================================
     # 🏭 NHÓM 2: FOUNDRY (SẢN XUẤT CHIP)
-    # =================================================================
-    "2330.TW": {"Ten": "TSMC", "Nganh": "Foundry - Logic"},
-    "2303.TW": {"Ten": "UMC", "Nganh": "Foundry - Logic"},
-    "6770.TW": {"Ten": "PSMC (Powerchip)", "Nganh": "Foundry - Memory"}, # Chuyên gia công chip nhớ
-    "5347.TWO": {"Ten": "VIS (Vanguard)", "Nganh": "Foundry - 8inch"},
+    "2330.TW": {"Ten": "TSMC", "Ten_CN": "台積電", "Nganh": "Foundry - Logic"},
+    "2303.TW": {"Ten": "UMC", "Ten_CN": "聯電", "Nganh": "Foundry - Logic"},
+    "6770.TW": {"Ten": "PSMC (Powerchip)", "Ten_CN": "力積電", "Nganh": "Foundry - Memory"},
+    "5347.TWO": {"Ten": "VIS (Vanguard)", "Ten_CN": "世界先進", "Nganh": "Foundry - 8inch"},
 
-    # =================================================================
-    # 🧠 NHÓM 3: IC DESIGN & IP (THIẾT KẾ & BẢN QUYỀN)
-    # =================================================================
-    "2454.TW": {"Ten": "MediaTek", "Nganh": "IC Design - Mobile/AI"},
-    "3034.TW": {"Ten": "Novatek", "Nganh": "IC Design - Display"},
-    "2379.TW": {"Ten": "Realtek", "Nganh": "IC Design - Network"},
-    "5269.TW": {"Ten": "ASMedia", "Nganh": "IC Design - High Speed"}, # Controller USB/PCIe
-    "3443.TW": {"Ten": "GUC (Global Unichip)", "Nganh": "Design Service (AI)"},
-    "3661.TW": {"Ten": "Alchip", "Nganh": "Design Service (AI)"},
-    "3035.TW": {"Ten": "Faraday Tech", "Nganh": "Design Service"},
-    "8096.TWO": {"Ten": "CoAsia", "Nganh": "Design Service"}, # Đối tác Samsung
-    "3529.TWO": {"Ten": "eMemory", "Nganh": "IP Core"},
-    "6533.TW": {"Ten": "Andes Tech", "Nganh": "IP Core (RISC-V)"},
+    # 🧠 NHÓM 3: IC DESIGN & IP
+    "2454.TW": {"Ten": "MediaTek", "Ten_CN": "聯發科", "Nganh": "IC Design - Mobile/AI"},
+    "3034.TW": {"Ten": "Novatek", "Ten_CN": "聯詠", "Nganh": "IC Design - Display"},
+    "2379.TW": {"Ten": "Realtek", "Ten_CN": "瑞昱", "Nganh": "IC Design - Network"},
+    "5269.TW": {"Ten": "ASMedia", "Ten_CN": "祥碩", "Nganh": "IC Design - High Speed"},
+    "3443.TW": {"Ten": "GUC (Global Unichip)", "Ten_CN": "創意", "Nganh": "Design Service (AI)"},
+    "3661.TW": {"Ten": "Alchip", "Ten_CN": "世芯-KY", "Nganh": "Design Service (AI)"},
+    "3035.TW": {"Ten": "Faraday Tech", "Ten_CN": "智原", "Nganh": "Design Service"},
+    "8096.TWO": {"Ten": "CoAsia", "Ten_CN": "擎亞", "Nganh": "Design Service"},
+    "3529.TWO": {"Ten": "eMemory", "Ten_CN": "力旺", "Nganh": "IP Core"},
+    "6533.TW": {"Ten": "Andes Tech", "Ten_CN": "晶心科", "Nganh": "IP Core (RISC-V)"},
 
-    # =================================================================
-    # 📡 NHÓM 4: COMPOUND SEMI (BÁN DẪN HỢP CHẤT) - 5G/QUANG HỌC
-    # =================================================================
-    "2455.TW": {"Ten": "Visual Photonics (VPEC)", "Nganh": "Compound Semi"}, # GaAs wafers
-    "3105.TWO": {"Ten": "Win Semi", "Nganh": "Compound Semi"},
-    "8086.TWO": {"Ten": "AWSC", "Nganh": "Compound Semi"},
-    "3707.TW": {"Ten": "Epistar (Ennostar)", "Nganh": "Compound/LED"},
+    # 📡 NHÓM 4: COMPOUND SEMI (5G/QUANG HỌC)
+    "2455.TW": {"Ten": "Visual Photonics (VPEC)", "Ten_CN": "全新", "Nganh": "Compound Semi"},
+    "3105.TWO": {"Ten": "Win Semi", "Ten_CN": "穩懋", "Nganh": "Compound Semi"},
+    "8086.TWO": {"Ten": "AWSC", "Ten_CN": "宏捷科", "Nganh": "Compound Semi"},
+    "3707.TW": {"Ten": "Epistar (Ennostar)", "Ten_CN": "富采", "Nganh": "Compound/LED"},
 
-    # =================================================================
     # 📦 NHÓM 5: OSAT & EQUIPMENT (HẬU CẦN)
-    # =================================================================
-    "3711.TW": {"Ten": "ASE Tech", "Nganh": "OSAT (Packaging)"},
-    "2449.TW": {"Ten": "KYEC", "Nganh": "OSAT (Testing)"},
-    "6488.TW": {"Ten": "GlobalWafers", "Nganh": "Wafer (Material)"},
-    "5483.TWO": {"Ten": "Sino-American", "Nganh": "Wafer (Material)"},
-    "3680.TW": {"Ten": "Gudeng", "Nganh": "Equipment (EUV Pod)"},
+    "3711.TW": {"Ten": "ASE Tech", "Ten_CN": "日月光投控", "Nganh": "OSAT (Packaging)"},
+    "2449.TW": {"Ten": "KYEC", "Ten_CN": "京元電子", "Nganh": "OSAT (Testing)"},
+    "6488.TW": {"Ten": "GlobalWafers", "Ten_CN": "環球晶", "Nganh": "Wafer (Material)"},
+    "5483.TWO": {"Ten": "Sino-American", "Ten_CN": "中美晶", "Nganh": "Wafer (Material)"},
+    "3680.TW": {"Ten": "Gudeng", "Ten_CN": "家登", "Nganh": "Equipment (EUV Pod)"},
 
-    # =================================================================
-    # 🖥️ NHÓM 6: AI SERVER & PC (HẠ TẦNG PHẦN CỨNG)
-    # =================================================================
-    "2317.TW": {"Ten": "Foxconn", "Nganh": "AI Server/OEM"},
-    "2382.TW": {"Ten": "Quanta", "Nganh": "AI Server/OEM"},
-    "3231.TW": {"Ten": "Wistron", "Nganh": "AI Server/OEM"},
-    "2356.TW": {"Ten": "Inventec", "Nganh": "AI Server/OEM"},
-    "2376.TW": {"Ten": "Gigabyte", "Nganh": "AI Server/Brand"},
-    "2357.TW": {"Ten": "Asus", "Nganh": "PC/Brand"},
-    "2301.TW": {"Ten": "Lite-On", "Nganh": "Power Supply"},
-    "2308.TW": {"Ten": "Delta Elec", "Nganh": "Power Supply"},
-
-    # =================================================================
-    # 📺 NHÓM 7: DISPLAY & COMPONENTS (MÀN HÌNH & LINH KIỆN)
-    # =================================================================
-    "2409.TW": {"Ten": "AUO", "Nganh": "Display Panel"}, # Bán nhà máy cho Micron
-    "3481.TW": {"Ten": "Innolux", "Nganh": "Display Panel"},
-    "3008.TW": {"Ten": "Largan", "Nganh": "Optics (Lens)"},
-    "3037.TW": {"Ten": "Unimicron", "Nganh": "PCB (ABF)"},
-    "2327.TW": {"Ten": "Yageo", "Nganh": "Passive Comp"},
-
-    # =================================================================
-    # 🏦 NHÓM 8: TÀI CHÍNH & VẬN TẢI (TRỤ CỘT)
-    # =================================================================
-    "2881.TW": {"Ten": "Fubon Fin", "Nganh": "Financial"},
-    "2882.TW": {"Ten": "Cathay Fin", "Nganh": "Financial"},
-    "2603.TW": {"Ten": "Evergreen", "Nganh": "Shipping"},
-    "2002.TW": {"Ten": "China Steel", "Nganh": "Steel"}
+    # 🤖 NHÓM BỔ SUNG: AI SERVER & OEM
+    "2317.TW": {"Ten": "Foxconn", "Ten_CN": "鴻海", "Nganh": "AI Server/OEM"},
+    "3231.TW": {"Ten": "Wistron", "Ten_CN": "緯創", "Nganh": "AI Server/OEM"},
+    "2382.TW": {"Ten": "Quanta", "Ten_CN": "廣達", "Nganh": "AI Server/OEM"},
+    "2356.TW": {"Ten": "Inventec", "Ten_CN": "英業達", "Nganh": "AI Server/OEM"},
+    "2301.TW": {"Ten": "Lite-On", "Ten_CN": "光寶科", "Nganh": "Power Supply"},
+    "2308.TW": {"Ten": "Delta Elec", "Ten_CN": "台達電", "Nganh": "Power Supply"}
 }
 
-DANH_SACH_MA = list(THONG_TIN_CO_PHIEU.keys())
-WINDOW_LONG = 21 
+# --- 2. CẤU HÌNH MY FAVORITE (NHẬP MÃ BẠN SỞ HỮU TẠI ĐÂY) ---
+MY_FAVORITES = ["2330", "2317", "2454", "3260", "8299"]
 
-print(f"🚀 Đang tải dữ liệu {len(DANH_SACH_MA)} mã chứng khoán Đài Loan (Bản V4 - Memory Full)...")
+def get_quick_action(row):
+    if row['%_Ngày'] > 1.8 and row['%_Vol_vs_TB'] > 150: return "🚀 MUA ĐUỔI"
+    if row['Sức_Mạnh_Dòng_Tiền'] > 2.0: return "💰 TIỀN VÀO MẠNH"
+    if row['%_Tăng_1_Tháng'] > 20 and row['%_Ngày'] < -1.5: return "⚠️ CHỐT LỜI BỚT"
+    if row['%_Ngày'] < -3 and row['%_Vol_vs_TB'] > 130: return "❌ THOÁT HÀNG"
+    return "👀 THEO DÕI"
 
-try:
-    # Tải dữ liệu hàng loạt (Bulk Download)
-    data = yf.download(DANH_SACH_MA, period="3mo", group_by='ticker', auto_adjust=True, threads=True)
-except Exception as e:
-    print("❌ Lỗi kết nối:", e)
-    exit()
-
+# --- 3. QUÉT DỮ LIỆU ---
 ket_qua = []
-print("⏳ Đang phân tích chi tiết từng mã...")
+today = datetime.now()
+start_date = today - timedelta(days=60)
 
-for ma in DANH_SACH_MA:
+for ticker, info in THONG_TIN_CO_PHIEU.items():
     try:
-        # Xử lý MultiIndex
-        if len(DANH_SACH_MA) == 1: df = data
-        else:
-            if ma not in data.columns.levels[0]: continue
-            df = data[ma].dropna()
-
-        if len(df) < WINDOW_LONG + 5: continue
-
-        # --- TÍNH TOÁN ---
-        gia_hien_tai = df['Close'].iloc[-1]
-        vol_hien_tai = df['Volume'].iloc[-1]
+        data = yf.download(ticker, start=start_date, end=today, progress=False)
+        if data.empty or len(data) < 22: continue
         
-        info = THONG_TIN_CO_PHIEU.get(ma, {"Ten": "Unknown", "Nganh": "Other"})
+        gia_ht = data['Close'].iloc[-1]
+        gia_truoc = data['Close'].iloc[-2]
+        pct_ngay = ((gia_ht - gia_truoc) / gia_truoc) * 100
+        vol_ht = data['Volume'].iloc[-1]
+        vol_tb = data['Volume'].rolling(window=20).mean().iloc[-1]
+        pct_vol = (vol_ht / vol_tb) * 100
+        pct_1m = ((gia_ht - data['Close'].iloc[-21]) / data['Close'].iloc[-21]) * 100
+        money_flow = (pct_vol / 100) * (1 + abs(pct_ngay) / 100)
         
-        # Tab 1: Tín hiệu ngày
-        gia_hom_qua = df['Close'].iloc[-2]
-        pct_doi_ngay = (gia_hien_tai - gia_hom_qua) / gia_hom_qua * 100
-        sma_20 = df['Close'].rolling(window=20).mean().iloc[-1]
-        vol_tb_20 = df['Volume'].rolling(window=20).mean().iloc[-1]
-        
-        tin_hieu_ngay = "Yếu"
-        if gia_hien_tai > sma_20:
-            if vol_hien_tai > vol_tb_20: tin_hieu_ngay = "Bùng nổ (Breakout)"
-            else: tin_hieu_ngay = "Tích lũy (Up)"
-        
-        # Tab 2: Xu hướng dòng tiền
-        gia_21_ngay_truoc = df['Close'].iloc[-(WINDOW_LONG)]
-        pct_tang_1_thang = ((gia_hien_tai - gia_21_ngay_truoc) / gia_21_ngay_truoc) * 100
-        
-        vol_tb_5 = df['Volume'].rolling(window=5).mean().iloc[-1]
-        suc_manh_dong_tien = (vol_tb_5 / vol_tb_20) if vol_tb_20 > 0 else 0
-        gtgd_ty_twd = (gia_hien_tai * vol_tb_20) / 1_000_000_000 
-
         ket_qua.append({
-            'Mã': ma.replace(".TW", "").replace(".TWO", ""), 
-            'Tên Công Ty': info["Ten"],
-            'Ngành': info["Nganh"],
-            'Giá': round(gia_hien_tai, 1),
-            '%_Ngày': round(pct_doi_ngay, 2),
-            '%_Vol_vs_TB': round((vol_hien_tai/vol_tb_20)*100, 0) if vol_tb_20 > 0 else 0,
-            'Tín_Hiệu_Ngày': tin_hieu_ngay,
-            '%_Tăng_1_Tháng': round(pct_tang_1_thang, 2),
-            'Sức_Mạnh_Dòng_Tiền': round(suc_manh_dong_tien, 2),
-            'GTGD_TB_Tỷ': round(gtgd_ty_twd, 3)
+            "Mã": ticker.split('.')[0],
+            "Tên Công Ty (CN)": info.get('Ten_CN', info['Ten']),
+            "Tên Công Ty (EN)": info['Ten'],
+            "Ngành": info['Nganh'],
+            "Giá": round(float(gia_ht), 2),
+            "%_Ngày": round(float(pct_ngay), 2),
+            "%_Vol_vs_TB": round(float(pct_vol), 0),
+            "%_Tăng_1_Tháng": round(float(pct_1m), 2),
+            "Sức_Mạnh_Dòng_Tiền": round(float(money_flow), 2),
+            "Tín_Hiệu_Ngày": "Breakout" if (pct_ngay > 1 and pct_vol > 120) else "Tích lũy" if pct_ngay > 0 else "Yếu",
+            "GTGD_TB_Tỷ": round((vol_tb * gia_ht) / 1e9, 3)
         })
-    except Exception as e:
-        continue
+    except: continue
 
-# --- XUẤT FILE ---
+# --- 4. XUẤT FILE 4 TABS ---
 if ket_qua:
     df_full = pd.DataFrame(ket_qua)
-    
-    # Sheet 1
-    df_tab1 = df_full[['Mã', 'Tên Công Ty', 'Ngành', 'Giá', '%_Ngày', '%_Vol_vs_TB', 'Tín_Hiệu_Ngày']].sort_values(by='%_Vol_vs_TB', ascending=False)
-    
-    # Sheet 2
-    df_tab2 = df_full.sort_values(by=['Ngành', 'Sức_Mạnh_Dòng_Tiền'], ascending=[True, False])
-    
-    # Sheet 3: Chấm điểm ngành
-    df_tab3 = df_full.groupby('Ngành').agg({
-        '%_Tăng_1_Tháng': 'mean',
-        'Sức_Mạnh_Dòng_Tiền': 'mean',
-        'GTGD_TB_Tỷ': 'sum',
-        'Mã': 'count'
-    }).reset_index()
-
-    max_money = df_tab3['GTGD_TB_Tỷ'].max() or 1
-    max_price = df_tab3['%_Tăng_1_Tháng'].max() or 1
-    # Trọng số tiền 70%
-    df_tab3['Điểm (0-100)'] = (
-    (df_tab3['%_Tăng_1_Tháng'] / max_price * 30) + 
-    (df_tab3['GTGD_TB_Tỷ'] / max_money * 70)
-    ).round(1)
-    df_tab3 = df_tab3.sort_values(by='Điểm (0-100)', ascending=False)
-
     file_name = "Taiwan_Market_Data_Latest.xlsx"
     with pd.ExcelWriter(file_name, engine='openpyxl') as writer:
-        df_tab1.to_excel(writer, sheet_name='1_Tin_Hieu_Hom_Nay', index=False)
-        df_tab2.to_excel(writer, sheet_name='2_Xu_Huong_21_Ngay', index=False)
-        df_tab3.to_excel(writer, sheet_name='3_Song_Nganh', index=False)
+        df_full[['Mã', 'Tên Công Ty (CN)', 'Giá', '%_Ngày', '%_Vol_vs_TB', 'Tín_Hiệu_Ngày']].to_excel(writer, sheet_name='1_Tin_Hieu_Hom_Nay', index=False)
+        df_full[['Mã', 'Tên Công Ty (CN)', 'Ngành', '%_Tăng_1_Tháng', 'Sức_Mạnh_Dòng_Tiền']].to_excel(writer, sheet_name='2_Xu_Huong_21_Ngay', index=False)
+        df_full.groupby('Ngành').agg({'%_Tăng_1_Tháng': 'mean', 'Sức_Mạnh_Dòng_Tiền': 'mean', 'GTGD_TB_Tỷ': 'sum', 'Mã': 'count'}).reset_index().to_excel(writer, sheet_name='3_Song_Nganh', index=False)
         
-    print(f"\n✅ Đã xuất báo cáo: {file_name}")
-    print("👉 Đã tách riêng nhóm Memory & Storage theo yêu cầu!")
-else:
-    print("❌ Không có dữ liệu.")
+        df_fav = df_full[df_full['Mã'].isin(MY_FAVORITES)].copy()
+        df_fav['QUICK_ACTION'] = df_fav.apply(get_quick_action, axis=1)
+        df_fav[['Mã', 'Tên Công Ty (CN)', 'Giá', '%_Ngày', 'QUICK_ACTION']].to_excel(writer, sheet_name='4_My_Favorite', index=False)
+    print(f"✅ Success! Saved {len(df_full)} stocks.")
