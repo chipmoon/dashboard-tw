@@ -17,24 +17,28 @@ if not os.path.exists(target_file):
     st.stop()
 
 # Đọc các Sheet dữ liệu
-try:
+@st.cache_data
+def load_data():
     df_daily = pd.read_excel(target_file, sheet_name='1_Tin_Hieu_Hom_Nay')
     df_trend = pd.read_excel(target_file, sheet_name='2_Xu_Huong_21_Ngay')
     df_sector = pd.read_excel(target_file, sheet_name='3_Song_Nganh')
-    
-    # Debug info
-    with st.expander("🔍 DEBUG: Kiểm tra dữ liệu", expanded=False):
-        st.write(f"✅ Sheet 1 (Daily): {len(df_daily)} hàng, {len(df_daily.columns)} cột")
-        st.write(f"✅ Sheet 2 (Trend): {len(df_trend)} hàng, {len(df_trend.columns)} cột")
-        st.write(f"✅ Sheet 3 (Sector): {len(df_sector)} hàng, {len(df_sector.columns)} cột")
-        st.write("Columns Sheet 3:", df_sector.columns.tolist())
-        st.dataframe(df_sector.head(), use_container_width=True)
-        
+    return df_daily, df_trend, df_sector
+
+try:
+    df_daily, df_trend, df_sector = load_data()
 except Exception as e:
-    st.error(f"Lỗi khi đọc file Excel: {e}")
+    st.error(f"❌ Lỗi đọc file Excel: {str(e)}")
     st.stop()
 
-# --- 3. NÚT TẢI FILE EXCEL (MỚI THÊM LẠI) ---
+# Debug info
+with st.expander("🔍 DEBUG: Kiểm tra dữ liệu", expanded=False):
+    st.write(f"✅ Sheet 1 (Daily): {len(df_daily)} hàng, {len(df_daily.columns)} cột")
+    st.write(f"✅ Sheet 2 (Trend): {len(df_trend)} hàng, {len(df_trend.columns)} cột")
+    st.write(f"✅ Sheet 3 (Sector): {len(df_sector)} hàng, {len(df_sector.columns)} cột")
+    st.write("Columns Sheet 3:", df_sector.columns.tolist())
+    st.dataframe(df_sector.head(), use_container_width=True)
+
+# --- 3. NÚT TẢI FILE EXCEL ---
 with st.expander("📥 TRÍCH XUẤT DỮ LIỆU", expanded=True):
     col_dl1, col_dl2 = st.columns([1, 4])
     with col_dl1:
@@ -59,13 +63,17 @@ with col_opt:
     )
 
 def convert_val(val):
-    if currency_mode == "Triệu USD ($)": return val * 1000 * 0.031
-    elif currency_mode == "Nghìn Tỷ VNĐ (₫)": return val * 770 / 1000
+    if currency_mode == "Triệu USD ($)": 
+        return val * 1000 * 0.031
+    elif currency_mode == "Nghìn Tỷ VNĐ (₫)": 
+        return val * 770 / 1000
     return val
 
 unit_label = "Tỷ TWD"
-if "USD" in currency_mode: unit_label = "Triệu USD"
-if "VNĐ" in currency_mode: unit_label = "Nghìn Tỷ VNĐ"
+if "USD" in currency_mode: 
+    unit_label = "Triệu USD"
+if "VNĐ" in currency_mode: 
+    unit_label = "Nghìn Tỷ VNĐ"
 
 df_sector['Thanh_Khoan_Hien_Thi'] = df_sector['GTGD_TB_Tỷ'].apply(convert_val)
 df_trend['Thanh_Khoan_Hien_Thi'] = df_trend['GTGD_TB_Tỷ'].apply(convert_val)
@@ -75,29 +83,58 @@ col1, col2 = st.columns([3, 2])
 
 with col1:
     st.subheader(f"1. BẢN ĐỒ DÒNG TIỀN NGÀNH ({unit_label})")
-    
-    # Validate data before plotting
-    if df_sector.empty or len(df_sector) == 0:
-        st.warning("⚠️ Không có dữ liệu ngành để hiển thị")
-    elif 'GTGD_TB_Tỷ' not in df_sector.columns:
-        st.error(f"❌ Cột 'GTGD_TB_Tỷ' không tìm thấy. Columns: {df_sector.columns.tolist()}")
-    else:
-        try:
+
+    # TREEMAP CREATION - ROBUST VERSION
+    try:
+        # Prepare data
+        df_plot = df_sector.copy()
+        df_plot['Value_Display'] = pd.to_numeric(df_plot['Thanh_Khoan_Hien_Thi'], errors='coerce').fillna(1)
+        df_plot['Color_Value'] = pd.to_numeric(df_plot['Avg_%_1Tháng'], errors='coerce').fillna(0)
+
+        # Validate data
+        if df_plot.empty or df_plot['Value_Display'].sum() == 0:
+            st.warning("⚠️ Không có dữ liệu hợp lệ để hiển thị treemap")
+        else:
+            # Create treemap
             fig_map = px.treemap(
-                df_sector, 
-                ids='Ngành',
-                labels='Ngành',
-                parents=[''] * len(df_sector),
-                values='Thanh_Khoan_Hien_Thi',
-                color='Avg_%_1Tháng',
+                df_plot,
+                path=['Ngành'],
+                values='Value_Display',
+                color='Color_Value',
                 color_continuous_scale='RdYlGn',
-                title="Độ lớn ô = Thanh khoản | Màu đỏ = Giảm, Màu xanh = Tăng"
+                color_continuous_midpoint=0,
+                hover_data={'Value_Display': ':.2f', 'Color_Value': ':.2f'}
             )
-            fig_map.update_layout(height=500)
+
+            # Update layout for better display
+            fig_map.update_layout(
+                height=700,
+                title="Độ lớn ô = Thanh khoản | Màu đỏ = Giảm, Xanh = Tăng",
+                font=dict(size=10),
+                margin=dict(l=5, r=80, t=40, b=5)
+            )
+
+            # Update traces
+            fig_map.update_traces(
+                textposition='middle center',
+                marker=dict(line=dict(width=1, color='white'))
+            )
+
+            # Display
             st.plotly_chart(fig_map, use_container_width=True)
-        except Exception as e:
-            st.error(f"❌ Lỗi vẽ biểu đồ treemap: {e}")
-            st.info(f"Dữ liệu: {df_sector.dtypes}")
+
+            # Debug info
+            with st.expander("Debug Info"):
+                st.write(f"✅ Treemap rendered with {len(df_plot)} sectors")
+                st.write(f"Total value: {df_plot['Value_Display'].sum():.2f}")
+
+    except Exception as e:
+        st.error(f"❌ Error creating treemap: {str(e)}")
+        import traceback
+        with st.expander("Full Error Details"):
+            st.code(traceback.format_exc())
+            st.write(f"Data shape: {df_sector.shape}")
+            st.dataframe(df_sector.head())
 
 with col2:
     st.subheader("2. TOP ĐỘT BIẾN KHỐI LƯỢNG")
@@ -112,6 +149,7 @@ with col2:
 st.divider()
 st.subheader("3. SOI CHI TIẾT THEO NGÀNH (MÔ HÌNH 4 PHẦN TƯ)")
 selected_sector = st.selectbox("Chọn ngành bạn muốn soi:", df_sector['Ngành'].unique())
+
 df_sub = df_trend[df_trend['Ngành'] == selected_sector]
 
 if not df_sub.empty:
