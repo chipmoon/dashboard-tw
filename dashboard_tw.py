@@ -45,7 +45,6 @@ with st.expander("🔍 DEBUG: Kiểm tra dữ liệu", expanded=False):
     st.write(f"✅ Sheet 3 (Sector): {len(df_sector)} hàng, {len(df_sector.columns)} cột")
     if not df_favorite.empty:
         st.write(f"✅ Sheet 4 (Favorites): {len(df_favorite)} hàng, {len(df_favorite.columns)} cột")
-        st.write("Columns Sheet 4:", df_favorite.columns.tolist())
 
 # --- 3. NÚT TẢI FILE EXCEL ---
 with st.expander("📥 TRÍCH XUẤT DỮ LIỆU", expanded=False):
@@ -71,7 +70,6 @@ if not df_favorite.empty:
     with col_fav1:
         st.subheader("📊 Phân Bố Tăng/Giảm (Hôm Nay)")
 
-        # Classify by daily performance
         df_fav_perf = df_favorite.copy()
         df_fav_perf['Trạng_Thái'] = df_fav_perf['%_Ngày'].apply(
             lambda x: 'Tăng Mạnh (>2%)' if x > 2 else 
@@ -79,10 +77,8 @@ if not df_favorite.empty:
                      ('Giảm Nhẹ (0 to -2%)' if x > -2 else 'Giảm Mạnh (<-2%)'))
         )
 
-        # Count by status
         status_counts = df_fav_perf['Trạng_Thái'].value_counts()
 
-        # Create pie chart with custom colors
         colors_daily = {
             'Tăng Mạnh (>2%)': '#00CC66',
             'Tăng Nhẹ (0-2%)': '#90EE90',
@@ -112,7 +108,6 @@ if not df_favorite.empty:
     with col_fav2:
         st.subheader("📈 Xu Hướng 1 Tháng")
 
-        # Classify by monthly performance
         df_fav_trend = df_favorite.copy()
         df_fav_trend['Xu_Hướng'] = df_fav_trend['%_Tăng_1_Tháng'].apply(
             lambda x: 'Tăng Mạnh (>10%)' if x > 10 else 
@@ -155,17 +150,14 @@ if not df_favorite.empty:
     # Detailed table with performance metrics
     st.subheader("📋 Chi Tiết Danh Mục")
 
-    # Add performance indicator column
     df_display = df_favorite.copy()
     df_display['Biểu_Tượng'] = df_display['%_Ngày'].apply(
         lambda x: '🚀' if x > 3 else ('📈' if x > 0 else ('📉' if x > -3 else '⚠️'))
     )
 
-    # Select columns for display
     display_cols = ['Biểu_Tượng', 'Mã', 'Tên Công Ty', 'Giá', '%_Ngày', '%_Tăng_1_Tháng', 
                     'RSI', 'MACD', 'Sức_Mạnh_Dòng_Tiền', 'QUICK_ACTION']
 
-    # Filter to available columns
     available_cols = [col for col in display_cols if col in df_display.columns]
 
     st.dataframe(
@@ -223,84 +215,123 @@ if "USD" in currency_mode:
 if "VNĐ" in currency_mode: 
     unit_label = "Nghìn Tỷ VNĐ"
 
-df_sector['Thanh_Khoan_Hien_Thi'] = df_sector['GTGD_TB_Tỷ'].apply(convert_val)
-df_trend['Thanh_Khoan_Hien_Thi'] = df_trend['GTGD_TB_Tỷ'].apply(convert_val)
+# --- 6. ENHANCED HIERARCHICAL TREEMAP WITH BOLD SECTORS ---
+st.subheader(f"1. BẢN ĐỒ DÒNG TIỀN CHI TIẾT (Ngành → Cổ Phiếu)")
 
-# --- 6. GIAO DIỆN BIỂU ĐỒ ---
+# Create hierarchical data from df_trend (all individual stocks)
+df_treemap = df_trend.copy()
+
+# Add converted liquidity
+df_treemap['Thanh_Khoan'] = df_treemap['GTGD_TB_Tỷ'].apply(convert_val)
+
+# Make sector names BOLD to distinguish from company codes
+df_treemap['Ngành_Bold'] = df_treemap['Ngành'].apply(lambda x: f"<b>{x}</b>")
+
+try:
+    # Create hierarchical treemap with path: All -> Sector -> Stock
+    fig_hier = px.treemap(
+        df_treemap,
+        path=['Ngành_Bold', 'Mã'],  # Use bold sector names
+        values='Thanh_Khoan',
+        color='%_Tăng_1_Tháng',
+        color_continuous_scale='RdYlGn',
+        color_continuous_midpoint=0,
+        hover_data={
+            'Mã': True,
+            'Tên Công Ty': True,
+            'Giá': ':.2f',
+            '%_Tăng_1_Tháng': ':.2f',
+            'Thanh_Khoan': ':.2f',
+            'Ngành': True,
+            'Ngành_Bold': False
+        },
+        labels={
+            'Thanh_Khoan': f'Thanh khoản ({unit_label})',
+            '%_Tăng_1_Tháng': '% Tăng 1 Tháng',
+            'Ngành_Bold': 'Ngành'
+        }
+    )
+
+    fig_hier.update_traces(
+        textposition='middle center',
+        textfont=dict(size=11),  # Slightly larger for better bold visibility
+        marker=dict(
+            line=dict(width=2, color='white'),
+            pad=dict(t=20, l=5, r=5, b=5)  # Add padding for better text display
+        )
+    )
+
+    fig_hier.update_layout(
+        height=800,
+        title=f"Kích thước = Thanh khoản ({unit_label}) | Màu sắc = % Tăng 1 Tháng<br><sub>Click vào ngành (chữ đậm) để phóng to, click 'All' để quay lại</sub>",
+        font=dict(size=11),
+        margin=dict(l=10, r=10, t=80, b=10)
+    )
+
+    st.plotly_chart(fig_hier, use_container_width=True)
+
+    st.info("💡 **Cách sử dụng:** Click vào ô ngành (**chữ đậm**) để xem chi tiết các cổ phiếu bên trong. Click 'All' ở trên để quay lại tổng quan.")
+
+except Exception as e:
+    st.error(f"❌ Lỗi tạo biểu đồ phân cấp: {str(e)}")
+    st.write("Fallback sang treemap cơ bản...")
+
+    # Fallback to simple sector treemap
+    df_sector['Thanh_Khoan_Hien_Thi'] = df_sector['GTGD_TB_Tỷ'].apply(convert_val)
+    df_plot = df_sector.copy()
+    df_plot['Value_Display'] = pd.to_numeric(df_plot['Thanh_Khoan_Hien_Thi'], errors='coerce').fillna(1)
+    df_plot['Color_Value'] = pd.to_numeric(df_plot['Avg_%_1Tháng'], errors='coerce').fillna(0)
+
+    fig_map = px.treemap(
+        df_plot,
+        path=['Ngành'],
+        values='Value_Display',
+        color='Color_Value',
+        color_continuous_scale='RdYlGn',
+        color_continuous_midpoint=0
+    )
+
+    fig_map.update_layout(height=700)
+    st.plotly_chart(fig_map, use_container_width=True)
+
+# --- 7. TOP VOLUME & SECTOR DETAIL ---
 col1, col2 = st.columns([3, 2])
 
 with col1:
-    st.subheader(f"1. BẢN ĐỒ DÒNG TIỀN NGÀNH ({unit_label})")
+    st.subheader("2. SOI CHI TIẾT THEO NGÀNH (MÔ HÌNH 4 PHẦN TƯ)")
+    selected_sector = st.selectbox("Chọn ngành bạn muốn soi:", sorted(df_trend['Ngành'].unique()))
 
-    try:
-        df_plot = df_sector.copy()
-        df_plot['Value_Display'] = pd.to_numeric(df_plot['Thanh_Khoan_Hien_Thi'], errors='coerce').fillna(1)
-        df_plot['Color_Value'] = pd.to_numeric(df_plot['Avg_%_1Tháng'], errors='coerce').fillna(0)
+    df_sub = df_trend[df_trend['Ngành'] == selected_sector].copy()
+    df_sub['Thanh_Khoan_Hien_Thi'] = df_sub['GTGD_TB_Tỷ'].apply(convert_val)
 
-        if df_plot.empty or df_plot['Value_Display'].sum() == 0:
-            st.warning("⚠️ Không có dữ liệu hợp lệ để hiển thị treemap")
-        else:
-            fig_map = px.treemap(
-                df_plot,
-                path=['Ngành'],
-                values='Value_Display',
-                color='Color_Value',
-                color_continuous_scale='RdYlGn',
-                color_continuous_midpoint=0,
-                hover_data={'Value_Display': ':.2f', 'Color_Value': ':.2f'}
+    if not df_sub.empty:
+        try:
+            fig_scatter = px.scatter(
+                df_sub,
+                x="Sức_Mạnh_Dòng_Tiền",
+                y="%_Tăng_1_Tháng",
+                size="Thanh_Khoan_Hien_Thi",
+                color="Sức_Mạnh_Dòng_Tiền",
+                text="Mã",
+                hover_name="Tên Công Ty",
+                labels={"Sức_Mạnh_Dòng_Tiền": "Lực Mua (Money Flow)", "%_Tăng_1_Tháng": "Đà Tăng Giá (%)"},
+                color_continuous_scale='Portland'
             )
-
-            fig_map.update_layout(
-                height=700,
-                title="Độ lớn ô = Thanh khoản | Màu đỏ = Giảm, Xanh = Tăng",
-                font=dict(size=10),
-                margin=dict(l=5, r=80, t=40, b=5)
-            )
-
-            fig_map.update_traces(
-                textposition='middle center',
-                marker=dict(line=dict(width=1, color='white'))
-            )
-
-            st.plotly_chart(fig_map, use_container_width=True)
-
-    except Exception as e:
-        st.error(f"❌ Error creating treemap: {str(e)}")
+            fig_scatter.add_vline(x=1.0, line_dash="dash", line_color="gray")
+            fig_scatter.add_hline(y=0, line_dash="dash", line_color="gray")
+            fig_scatter.update_layout(height=500)
+            st.plotly_chart(fig_scatter, use_container_width=True)
+        except Exception as e:
+            st.error(f"❌ Lỗi vẽ biểu đồ scatter: {e}")
+    else:
+        st.warning(f"⚠️ Không có dữ liệu cho ngành: {selected_sector}")
 
 with col2:
-    st.subheader("2. TOP ĐỘT BIẾN KHỐI LƯỢNG")
-    df_vol = df_daily.sort_values(by='%_Vol_vs_TB', ascending=False).head(12)
+    st.subheader("3. TOP ĐỘT BIẾN KHỐI LƯỢNG")
+    df_vol = df_daily.sort_values(by='%_Vol_vs_TB', ascending=False).head(15)
     st.dataframe(
         df_vol[['Mã', 'Tên Công Ty', 'Giá', '%_Vol_vs_TB', 'Tín_Hiệu_Ngày']],
         hide_index=True,
-        use_container_width=True
+        use_container_width=True,
+        height=500
     )
-
-# --- 7. CHI TIẾT THEO NGÀNH ---
-st.divider()
-st.subheader("3. SOI CHI TIẾT THEO NGÀNH (MÔ HÌNH 4 PHẦN TƯ)")
-selected_sector = st.selectbox("Chọn ngành bạn muốn soi:", df_sector['Ngành'].unique())
-
-df_sub = df_trend[df_trend['Ngành'] == selected_sector]
-
-if not df_sub.empty:
-    try:
-        fig_scatter = px.scatter(
-            df_sub,
-            x="Sức_Mạnh_Dòng_Tiền",
-            y="%_Tăng_1_Tháng",
-            size="Thanh_Khoan_Hien_Thi",
-            color="Sức_Mạnh_Dòng_Tiền",
-            text="Mã",
-            hover_name="Tên Công Ty",
-            labels={"Sức_Mạnh_Dòng_Tiền": "Lực Mua (Money Flow)", "%_Tăng_1_Tháng": "Đà Tăng Giá (%)"},
-            color_continuous_scale='Portland'
-        )
-        fig_scatter.add_vline(x=1.0, line_dash="dash", line_color="gray")
-        fig_scatter.add_hline(y=0, line_dash="dash", line_color="gray")
-        fig_scatter.update_layout(height=500)
-        st.plotly_chart(fig_scatter, use_container_width=True)
-    except Exception as e:
-        st.error(f"❌ Lỗi vẽ biểu đồ scatter: {e}")
-else:
-    st.warning(f"⚠️ Không có dữ liệu cho ngành: {selected_sector}")
