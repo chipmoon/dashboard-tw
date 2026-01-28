@@ -22,103 +22,103 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# --- 1. CẤU HÌNH DANH SÁCH MÃ MỞ RỘNG (40+ MÃ ĐẦU NGÀNH) ---
-THONG_TIN_CO_PHIEU = {
-    # 💾 NHÓM 1: MEMORY & STORAGE (BỘ NHỚ)
-    "8299.TWO": {"Ten": "Phison (Electronics)", "Ten_CN": "群聯", "Nganh": "Memory - Controller"},
-    "2408.TW": {"Ten": "Nanya Technology", "Ten_CN": "南亞科", "Nganh": "Memory - DRAM"},
-    "2344.TW": {"Ten": "Winbond Elec", "Ten_CN": "華邦電", "Nganh": "Memory - Flash/DRAM"},
-    "2337.TW": {"Ten": "Macronix (MXIC)", "Ten_CN": "旺宏", "Nganh": "Memory - NOR Flash"},
-    "3260.TWO": {"Ten": "ADATA", "Ten_CN": "威剛", "Nganh": "Memory - Module"},
-    "2451.TW": {"Ten": "Transcend Info", "Ten_CN": "創見", "Nganh": "Memory - Module"},
-    "4967.TW": {"Ten": "TeamGroup", "Ten_CN": "十銓", "Nganh": "Memory - Module"},
-    "8150.TW": {"Ten": "ChipMOS", "Ten_CN": "南茂", "Nganh": "Memory - Packaging"},
-    "6239.TW": {"Ten": "PTI (Powertech)", "Ten_CN": "力成", "Nganh": "Memory - Packaging"},
+# --- 1. EXTENDED STOCK LIST CONFIGURATION (40+ LEADING STOCKS) ---
+STOCK_INFO = {
+    # 💾 GROUP 1: MEMORY & STORAGE
+    "8299.TWO": {"Name": "Phison (Electronics)", "Name_CN": "群聯", "Sector": "Memory - Controller"},
+    "2408.TW": {"Name": "Nanya Technology", "Name_CN": "南亞科", "Sector": "Memory - DRAM"},
+    "2344.TW": {"Name": "Winbond Elec", "Name_CN": "華邦電", "Sector": "Memory - Flash/DRAM"},
+    "2337.TW": {"Name": "Macronix (MXIC)", "Name_CN": "旺宏", "Sector": "Memory - NOR Flash"},
+    "3260.TWO": {"Name": "ADATA", "Name_CN": "威剛", "Sector": "Memory - Module"},
+    "2451.TW": {"Name": "Transcend Info", "Name_CN": "創見", "Sector": "Memory - Module"},
+    "4967.TW": {"Name": "TeamGroup", "Name_CN": "十銓", "Sector": "Memory - Module"},
+    "8150.TW": {"Name": "ChipMOS", "Name_CN": "南茂", "Sector": "Memory - Packaging"},
+    "6239.TW": {"Name": "PTI (Powertech)", "Name_CN": "力成", "Sector": "Memory - Packaging"},
 
-    # 🏭 NHÓM 2: FOUNDRY & WAFERS (SẢN XUẤT CHIP & VẬT LIỆU)
-    "2330.TW": {"Ten": "TSMC", "Ten_CN": "台積電", "Nganh": "Foundry - Logic"},
-    "2303.TW": {"Ten": "UMC", "Ten_CN": "聯電", "Nganh": "Foundry - Logic"},
-    "6770.TW": {"Ten": "PSMC (Powerchip)", "Ten_CN": "力積電", "Nganh": "Foundry - Memory"},
-    "5347.TWO": {"Ten": "VIS (Vanguard)", "Ten_CN": "世界先進", "Nganh": "Foundry - 8inch"},
-    "6488.TWO": {"Ten": "GlobalWafers", "Ten_CN": "環球晶", "Nganh": "Wafer - Material"},
-    "5483.TWO": {"Ten": "Sino-American", "Ten_CN": "中美晶", "Nganh": "Wafer - Material"},
+    # 🏭 GROUP 2: FOUNDRY & WAFERS (CHIP PRODUCTION & MATERIALS)
+    "2330.TW": {"Name": "TSMC", "Name_CN": "台積電", "Sector": "Foundry - Logic"},
+    "2303.TW": {"Name": "UMC", "Name_CN": "聯電", "Sector": "Foundry - Logic"},
+    "6770.TW": {"Name": "PSMC (Powerchip)", "Name_CN": "力積電", "Sector": "Foundry - Memory"},
+    "5347.TWO": {"Name": "VIS (Vanguard)", "Name_CN": "世界先進", "Sector": "Foundry - 8inch"},
+    "6488.TWO": {"Name": "GlobalWafers", "Name_CN": "環球晶", "Sector": "Wafer - Material"},
+    "5483.TWO": {"Name": "Sino-American", "Name_CN": "中美晶", "Sector": "Wafer - Material"},
 
-    # 🧠 NHÓM 3: IC DESIGN, IP & EQUIPMENT
-    "2454.TW": {"Ten": "MediaTek", "Ten_CN": "聯發科", "Nganh": "IC Design - Mobile/AI"},
-    "3034.TW": {"Ten": "Novatek", "Ten_CN": "聯詠", "Nganh": "IC Design - Display"},
-    "2379.TW": {"Ten": "Realtek", "Ten_CN": "瑞昱", "Nganh": "IC Design - Network"},
-    "5269.TW": {"Ten": "ASMedia", "Ten_CN": "祥碩", "Nganh": "IC Design - High Speed"},
-    "3443.TW": {"Ten": "GUC (Global Unichip)", "Ten_CN": "創意", "Nganh": "Design Service (AI)"},
-    "3661.TW": {"Ten": "Alchip", "Ten_CN": "世芯-KY", "Nganh": "Design Service (AI)"},
-    "3035.TW": {"Ten": "Faraday Tech", "Ten_CN": "智原", "Nganh": "Design Service"},
-    "8096.TWO": {"Ten": "CoAsia", "Ten_CN": "擎亞", "Nganh": "Design Service"},
-    "3529.TWO": {"Ten": "eMemory", "Ten_CN": "力旺", "Nganh": "IP Core"},
-    "6533.TW": {"Ten": "Andes Tech", "Ten_CN": "晶心科", "Nganh": "IP Core (RISC-V)"},
-    "3680.TW": {"Ten": "Gudeng", "Ten_CN": "家登", "Nganh": "Equipment (EUV Pod)"},
-    "6133.TWO": {"Ten": "Gimhwak", "Ten_CN": "金橋", "Nganh": "Electronics"},
-    "6173.TWO": {"Ten": "Shinmore", "Ten_CN": "信昌電", "Nganh": "Electronic Components"},
-    # 📡 NHÓM 4: COMPOUND SEMI & OSAT (HẬU CẦN & 5G)
-    "2455.TW": {"Ten": "Visual Photonics", "Ten_CN": "全新", "Nganh": "Compound Semi"},
-    "3105.TWO": {"Ten": "Win Semi", "Ten_CN": "穩懋", "Nganh": "Compound Semi"},
-    "8086.TWO": {"Ten": "AWSC", "Ten_CN": "宏捷科", "Nganh": "Compound Semi"},
-    "3714.TW": {"Ten": "Ennostar Inc", "Ten_CN": "富采", "Nganh": "Compound/LED"},
-    "3711.TW": {"Ten": "ASE Tech", "Ten_CN": "日月光投控", "Nganh": "OSAT (Packaging)"},
-    "2449.TW": {"Ten": "KYEC", "Ten_CN": "京元電子", "Nganh": "OSAT (Testing)"},
+    # 🧠 GROUP 3: IC DESIGN, IP & EQUIPMENT
+    "2454.TW": {"Name": "MediaTek", "Name_CN": "聯發科", "Sector": "IC Design - Mobile/AI"},
+    "3034.TW": {"Name": "Novatek", "Name_CN": "聯詠", "Sector": "IC Design - Display"},
+    "2379.TW": {"Name": "Realtek", "Name_CN": "瑞昱", "Sector": "IC Design - Network"},
+    "5269.TW": {"Name": "ASMedia", "Name_CN": "祥碩", "Sector": "IC Design - High Speed"},
+    "3443.TW": {"Name": "GUC (Global Unichip)", "Name_CN": "創意", "Sector": "Design Service (AI)"},
+    "3661.TW": {"Name": "Alchip", "Name_CN": "世芯-KY", "Sector": "Design Service (AI)"},
+    "3035.TW": {"Name": "Faraday Tech", "Name_CN": "智原", "Sector": "Design Service"},
+    "8096.TWO": {"Name": "CoAsia", "Name_CN": "擎亞", "Sector": "Design Service"},
+    "3529.TWO": {"Name": "eMemory", "Name_CN": "力旺", "Sector": "IP Core"},
+    "6533.TW": {"Name": "Andes Tech", "Name_CN": "晶心科", "Sector": "IP Core (RISC-V)"},
+    "3680.TW": {"Name": "Gudeng", "Name_CN": "家登", "Sector": "Equipment (EUV Pod)"},
+    "6133.TWO": {"Name": "Gimhwak", "Name_CN": "金橋", "Sector": "Electronics"},
+    "6173.TWO": {"Name": "Shinmore", "Name_CN": "信昌電", "Sector": "Electronic Components"},
+    # 📡 GROUP 4: COMPOUND SEMI & OSAT (BACKEND & 5G)
+    "2455.TW": {"Name": "Visual Photonics", "Name_CN": "全新", "Sector": "Compound Semi"},
+    "3105.TWO": {"Name": "Win Semi", "Name_CN": "穩懋", "Sector": "Compound Semi"},
+    "8086.TWO": {"Name": "AWSC", "Name_CN": "宏捷科", "Sector": "Compound Semi"},
+    "3714.TW": {"Name": "Ennostar Inc", "Name_CN": "富采", "Sector": "Compound/LED"},
+    "3711.TW": {"Name": "ASE Tech", "Name_CN": "日月光投控", "Sector": "OSAT (Packaging)"},
+    "2449.TW": {"Name": "KYEC", "Name_CN": "京元電子", "Sector": "OSAT (Testing)"},
 
-    # 🤖 NHÓM 5: AI SERVER, OEM & POWER SUPPLY
-    "2317.TW": {"Ten": "Foxconn", "Ten_CN": "鴻海", "Nganh": "AI Server/OEM"},
-    "3231.TW": {"Ten": "Wistron", "Ten_CN": "緯創", "Nganh": "AI Server/OEM"},
-    "2382.TW": {"Ten": "Quanta", "Ten_CN": "廣達", "Nganh": "AI Server/OEM"},
-    "2356.TW": {"Ten": "Inventec", "Ten_CN": "英業達", "Nganh": "AI Server/OEM"},
-    "2301.TW": {"Ten": "Lite-On", "Ten_CN": "光寶科", "Nganh": "Power Supply"},
-    "2308.TW": {"Ten": "Delta Elec", "Ten_CN": "台達電", "Nganh": "Power Supply"},
+    # 🤖 GROUP 5: AI SERVER, OEM & POWER SUPPLY
+    "2317.TW": {"Name": "Foxconn", "Name_CN": "鴻海", "Sector": "AI Server/OEM"},
+    "3231.TW": {"Name": "Wistron", "Name_CN": "緯創", "Sector": "AI Server/OEM"},
+    "2382.TW": {"Name": "Quanta", "Name_CN": "廣達", "Sector": "AI Server/OEM"},
+    "2356.TW": {"Name": "Inventec", "Name_CN": "英業達", "Sector": "AI Server/OEM"},
+    "2301.TW": {"Name": "Lite-On", "Name_CN": "光寶科", "Sector": "Power Supply"},
+    "2308.TW": {"Name": "Delta Elec", "Name_CN": "台達電", "Sector": "Power Supply"},
 
-    # 🚢 NHÓM 6: SHIPPING & LOGISTICS (VẬN TẢI BIỂN)
-    "2603.TW": {"Ten": "Evergreen Marine", "Ten_CN": "長榮", "Nganh": "Shipping"},
-    "2609.TW": {"Ten": "Yang Ming", "Ten_CN": "陽明", "Nganh": "Shipping"},
-    "2615.TW": {"Ten": "Wan Hai Lines", "Ten_CN": "萬海", "Nganh": "Shipping"},
-    "2618.TW": {"Ten": "EVA Air", "Ten_CN": "長榮航", "Nganh": "Airline"},
-    "2610.TW": {"Ten": "China Airlines", "Ten_CN": "華航", "Nganh": "Airline"},
+    # 🚢 GROUP 6: SHIPPING & LOGISTICS (MARITIME TRANSPORT)
+    "2603.TW": {"Name": "Evergreen Marine", "Name_CN": "長榮", "Sector": "Shipping"},
+    "2609.TW": {"Name": "Yang Ming", "Name_CN": "陽明", "Sector": "Shipping"},
+    "2615.TW": {"Name": "Wan Hai Lines", "Name_CN": "萬海", "Sector": "Shipping"},
+    "2618.TW": {"Name": "EVA Air", "Name_CN": "長榮航", "Sector": "Airline"},
+    "2610.TW": {"Name": "China Airlines", "Name_CN": "華航", "Sector": "Airline"},
 
-    # 💰 NHÓM 7: FINANCIALS (TÀI CHÍNH - TRỤ CỘT VN-INDEX ĐÀI LOAN)
-    "2881.TW": {"Ten": "Fubon Financial", "Ten_CN": "富邦金", "Nganh": "Financial"},
-    "2882.TW": {"Ten": "Cathay Financial", "Ten_CN": "國泰金", "Nganh": "Financial"},
-    "2891.TW": {"Ten": "CTBC Financial", "Ten_CN": "中信金", "Nganh": "Financial"},
-    "5880.TW": {"Ten": "TCB Financial", "Ten_CN": "合庫金", "Nganh": "Financial"},
-    "2886.TW": {"Ten": "Mega Financial", "Ten_CN": "兆豐金", "Nganh": "Financial"},
+    # 💰 GROUP 7: FINANCIALS (FINANCIAL PILLARS)
+    "2881.TW": {"Name": "Fubon Financial", "Name_CN": "富邦金", "Sector": "Financial"},
+    "2882.TW": {"Name": "Cathay Financial", "Name_CN": "國泰金", "Sector": "Financial"},
+    "2891.TW": {"Name": "CTBC Financial", "Name_CN": "中信金", "Sector": "Financial"},
+    "5880.TW": {"Name": "TCB Financial", "Name_CN": "合庫金", "Sector": "Financial"},
+    "2886.TW": {"Name": "Mega Financial", "Name_CN": "兆豐金", "Sector": "Financial"},
 
-    # 🏗️ NHÓM 8: TRADITIONAL INDUSTRY (NHỰA, THÉP, Ô TÔ)
-    "1301.TW": {"Ten": "Formosa Plastics", "Ten_CN": "台塑", "Nganh": "Plastics"},
-    "2002.TW": {"Ten": "China Steel", "Ten_CN": "中鋼", "Nganh": "Steel"},
-    "2201.TW": {"Ten": "Yulon Motor", "Ten_CN": "裕隆", "Nganh": "Automobile"},
-    "1526.TWO": {"Ten": "Kien Cheng", "Ten_CN": "建錩", "Nganh": "Industrial"},
+    # 🏗️ GROUP 8: TRADITIONAL INDUSTRY (PLASTICS, STEEL, AUTO)
+    "1301.TW": {"Name": "Formosa Plastics", "Name_CN": "台塑", "Sector": "Plastics"},
+    "2002.TW": {"Name": "China Steel", "Name_CN": "中鋼", "Sector": "Steel"},
+    "2201.TW": {"Name": "Yulon Motor", "Name_CN": "裕隆", "Sector": "Automobile"},
+    "1526.TWO": {"Name": "Kien Cheng", "Name_CN": "建錩", "Sector": "Industrial"},
 }
 
-# --- 2. CẤU HÌNH MY FAVORITE (NHẬP MÃ BẠN SỞ HỮU TẠI ĐÂY) ---
+# --- 2. MY FAVORITE CONFIGURATION (ENTER YOUR PORTFOLIO CODES HERE) ---
 MY_FAVORITES = ["2454", "2317", "2455", "8299", "8096", "1526", "6133", "6173"]
 
-# Validate that all favorites exist in THONG_TIN_CO_PHIEU
+# Validate that all favorites exist in STOCK_INFO
 logger.info(f"🎯 MY_FAVORITES configured: {MY_FAVORITES}")
 for fav_code in MY_FAVORITES:
     ticker_variants = [f"{fav_code}.TW", f"{fav_code}.TWO"]
     found_ticker = None
-    for ticker in THONG_TIN_CO_PHIEU.keys():
+    for ticker in STOCK_INFO.keys():
         if ticker.replace(".TWO", "").replace(".TW", "") == fav_code:
             found_ticker = ticker
-            company_name = THONG_TIN_CO_PHIEU[ticker]["Ten"]
-            sector = THONG_TIN_CO_PHIEU[ticker]["Nganh"]
+            company_name = STOCK_INFO[ticker]["Name"]
+            sector = STOCK_INFO[ticker]["Sector"]
             logger.info(f"  ✓ {fav_code} → {ticker} ({company_name}, {sector})")
             break
     if not found_ticker:
-        logger.error(f"  ✗ {fav_code}: NOT FOUND in THONG_TIN_CO_PHIEU dictionary!")
+        logger.error(f"  ✗ {fav_code}: NOT FOUND in STOCK_INFO dictionary!")
 
 def get_quick_action(row):
     """🤖 AI Trading Signal Generator"""
-    if row['%_Ngày'] > 1.8 and row['%_Vol_vs_TB'] > 150: return "🚀 MUA ĐUỔI"
-    if row['Sức_Mạnh_Dòng_Tiền'] > 2.0: return "💰 TIỀN VÀO MẠNH"
-    if row['%_Tăng_1_Tháng'] > 20 and row['%_Ngày'] < -1.5: return "⚠️ CHỐT LỜI BỚT"
-    if row['%_Ngày'] < -3 and row['%_Vol_vs_TB'] > 130: return "❌ THOÁT HÀNG"
-    return "👀 THEO DÕI"
+    if row['%_Ngày'] > 1.8 and row['%_Vol_vs_TB'] > 150: return "🚀 BUY STRONG"
+    if row['Sức_Mạnh_Dòng_Tiền'] > 2.0: return "💰 STRONG INFLOW"
+    if row['%_Tăng_1_Tháng'] > 20 and row['%_Ngày'] < -1.5: return "⚠️ TAKE PROFIT"
+    if row['%_Ngày'] < -3 and row['%_Vol_vs_TB'] > 130: return "❌ EXIT"
+    return "👀 WATCH"
 
 def validate_price_data(data, ticker, min_rows=22, is_favorite=False):
     """✅ Validate data integrity before processing"""
@@ -201,34 +201,34 @@ def calculate_professional_indicators(df):
     
     return indicators
 
-# --- 3. QUÉT DỮ LIỆU (BULK DOWNLOAD - More Reliable) ---
+# --- 3. DATA SCANNING (BULK DOWNLOAD - More Reliable) ---
 logger.info("🚀 STARTING TAIWAN STOCK ANALYSIS")
-logger.info(f"📊 Total stocks to analyze: {len(THONG_TIN_CO_PHIEU)}")
+logger.info(f"📊 Total stocks to analyze: {len(STOCK_INFO)}")
 
-DANH_SACH_MA = list(THONG_TIN_CO_PHIEU.keys())
+TICKER_LIST = list(STOCK_INFO.keys())
 today = datetime.now()
 start_date = today - timedelta(days=60)
 
 try:
     # Bulk download all tickers at once (more reliable)
     logger.info("📥 Bulk downloading all stocks...")
-    data = yf.download(DANH_SACH_MA, start=start_date, end=today, progress=False, group_by='ticker', auto_adjust=True, threads=True)
-    logger.info(f"✅ Downloaded {len(DANH_SACH_MA)} stocks")
+    data = yf.download(TICKER_LIST, start=start_date, end=today, progress=False, group_by='ticker', auto_adjust=True, threads=True)
+    logger.info(f"✅ Downloaded {len(TICKER_LIST)} stocks")
 except Exception as e:
     logger.error(f"❌ Download failed: {str(e)}")
     print(f"❌ Error downloading data: {str(e)}")
     exit()
 
-ket_qua = []
+results = []
 success_count = 0
 error_count = 0
 
-for ticker in DANH_SACH_MA:
+for ticker in TICKER_LIST:
     try:
         logger.debug(f"📥 Processing {ticker}...")
         
         # Handle MultiIndex structure from bulk download
-        if len(DANH_SACH_MA) == 1:
+        if len(TICKER_LIST) == 1:
             df = data
         else:
             if ticker not in data.columns.levels[0]:
@@ -244,70 +244,70 @@ for ticker in DANH_SACH_MA:
             continue
         
         # Get stock info
-        info = THONG_TIN_CO_PHIEU.get(ticker, {"Ten": "Unknown", "Ten_CN": "", "Nganh": "Other"})
+        info = STOCK_INFO.get(ticker, {"Name": "Unknown", "Name_CN": "", "Sector": "Other"})
         
         # --- CALCULATE PROFESSIONAL INDICATORS ---
         pro_indicators = calculate_professional_indicators(df)
         
-        # --- TÍNH TOÁN ---
-        gia_hien_tai = df['Close'].iloc[-1]
-        gia_hom_qua = df['Close'].iloc[-2]
-        vol_hien_tai = df['Volume'].iloc[-1]
+        # --- CALCULATIONS ---
+        current_price_val = df['Close'].iloc[-1]
+        prev_price = df['Close'].iloc[-2]
+        current_vol = df['Volume'].iloc[-1]
         
-        pct_doi_ngay = (gia_hien_tai - gia_hom_qua) / gia_hom_qua * 100
+        pct_change_day = (current_price_val - prev_price) / prev_price * 100
         sma_20 = df['Close'].rolling(window=20).mean().iloc[-1]
         vol_tb_20 = df['Volume'].rolling(window=20).mean().iloc[-1]
         
         # 21-day trend
-        gia_21_ngay_truoc = df['Close'].iloc[-21]
-        pct_tang_1_thang = ((gia_hien_tai - gia_21_ngay_truoc) / gia_21_ngay_truoc) * 100
+        price_21d_ago = df['Close'].iloc[-21]
+        pct_gain_1m = ((current_price_val - price_21d_ago) / price_21d_ago) * 100
         
         vol_tb_5 = df['Volume'].rolling(window=5).mean().iloc[-1]
-        suc_manh_dong_tien = (vol_tb_5 / vol_tb_20) if vol_tb_20 > 0 else 0
-        gtgd_ty_twd = (gia_hien_tai * vol_tb_20) / 1_000_000_000 
+        money_flow_strength = (vol_tb_5 / vol_tb_20) if vol_tb_20 > 0 else 0
+        avg_trading_val_b = (current_price_val * vol_tb_20) / 1_000_000_000 
         
         # Safe conversions
-        gia_hien_tai_val = safe_convert_to_float(gia_hien_tai)
-        pct_doi_ngay_val = safe_convert_to_float(pct_doi_ngay)
-        pct_vol_val = safe_convert_to_float((vol_hien_tai / vol_tb_20 * 100) if vol_tb_20 > 0 else 0)
-        pct_tang_1_thang_val = safe_convert_to_float(pct_tang_1_thang)
-        suc_manh_dong_tien_val = safe_convert_to_float(suc_manh_dong_tien)
-        gtgd_ty_twd_val = safe_convert_to_float(gtgd_ty_twd)
+        current_price_val_val = safe_convert_to_float(current_price_val)
+        pct_change_day_val = safe_convert_to_float(pct_change_day)
+        pct_vol_val = safe_convert_to_float((current_vol / vol_tb_20 * 100) if vol_tb_20 > 0 else 0)
+        pct_gain_1m_val = safe_convert_to_float(pct_gain_1m)
+        money_flow_strength_val = safe_convert_to_float(money_flow_strength)
+        avg_trading_val_b_val = safe_convert_to_float(avg_trading_val_b)
         
         # Signal determination
-        tin_hieu_ngay = "Yếu"
-        if gia_hien_tai > sma_20:
-            if vol_hien_tai > vol_tb_20: 
-                tin_hieu_ngay = "Bùng nổ (Breakout)"
+        signal_day = "Weak"
+        if current_price_val > sma_20:
+            if current_vol > vol_tb_20: 
+                signal_day = "Breakout"
             else: 
-                tin_hieu_ngay = "Tích lũy (Up)"
+                signal_day = "Accumulation (Up)"
         
-        mã_code = ticker.replace(".TWO", "").replace(".TW", "")
-        is_favorite = mã_code in MY_FAVORITES
+        stock_code = ticker.replace(".TWO", "").replace(".TW", "")
+        is_favorite = stock_code in MY_FAVORITES
         favorite_marker = "⭐" if is_favorite else "  "
         
-        ket_qua.append({
-            "Mã": mã_code,
-            "Tên Công Ty": info['Ten'],
-            "Tên Công Ty (CN)": info.get('Ten_CN', info['Ten']),
-            "Ngành": info['Nganh'],
-            "Giá": round(gia_hien_tai_val, 2),
-            "%_Ngày": round(pct_doi_ngay_val, 2),
-            "%_Vol_vs_TB": round(pct_vol_val, 0),
-            "%_Tăng_1_Tháng": round(pct_tang_1_thang_val, 2),
-            "Sức_Mạnh_Dòng_Tiền": round(suc_manh_dong_tien_val, 2),
-            "Tín_Hiệu_Ngày": tin_hieu_ngay,
-            "GTGD_TB_Tỷ": round(gtgd_ty_twd_val, 3),
+        results.append({
+            "Code": stock_code,
+            "Name": info['Name'],
+            "Name_CN": info.get('Name_CN', info['Name']),
+            "Sector": info['Sector'],
+            "Price": round(current_price_val_val, 2),
+            "Pct_Day": round(pct_change_day_val, 2),
+            "Vol_vs_Avg": round(pct_vol_val, 0),
+            "Pct_1Month": round(pct_gain_1m_val, 2),
+            "Money_Flow_Strength": round(money_flow_strength_val, 2),
+            "Signal": signal_day,
+            "Avg_Trading_Value_B": round(avg_trading_val_b_val, 3),
             # Professional Indicators for Favorites
             "RSI": round(pro_indicators['RSI'], 2),
             "MACD": round(pro_indicators['MACD'], 4),
             "BB_Position": round(pro_indicators['BB_Position'], 1),
             "Stochastic": round(pro_indicators['Stochastic'], 1),
-            "ATR%": round(pro_indicators['ATR_Percent'], 2),
+            "ATR_Pct": round(pro_indicators['ATR_Percent'], 2),
             "Vol_Trend": round(pro_indicators['Vol_Trend'], 1),
         })
         success_count += 1
-        logger.debug(f"✅ {favorite_marker} {ticker} ({mã_code}): {info['Ten']} - Price: {gia_hien_tai_val:.2f} TWD")
+        logger.debug(f"✅ {favorite_marker} {ticker} ({stock_code}): {info['Name']} - Price: {current_price_val_val:.2f} TWD")
         
     except Exception as e:
         error_count += 1
@@ -318,35 +318,35 @@ logger.info(f"✅ Data collection completed: {success_count} success, {error_cou
 
 # --- DIAGNOSE FAVORITE STOCKS ---
 logger.info("📍 Checking favorite stocks collection...")
-collected_mã = set(item["Mã"] for item in ket_qua)
-collected_favorites = [fav for fav in MY_FAVORITES if fav in collected_mã]
-missing_favorites = [fav for fav in MY_FAVORITES if fav not in collected_mã]
+collected_codes = set(item["Code"] for item in results)
+collected_favorites = [fav for fav in MY_FAVORITES if fav in collected_codes]
+missing_favorites = [fav for fav in MY_FAVORITES if fav not in collected_codes]
 
-logger.info(f"📊 Favorites collected in ket_qua: {len(collected_favorites)}/{len(MY_FAVORITES)}")
+logger.info(f"📊 Favorites collected in results: {len(collected_favorites)}/{len(MY_FAVORITES)}")
 for fav in collected_favorites:
-    # Find details from ket_qua
-    fav_data = next((item for item in ket_qua if item["Mã"] == fav), None)
-    if fav_data:
-        logger.info(f"  ✓ {fav}: {fav_data.get('Tên Công Ty', 'N/A')} - Price: {fav_data.get('Giá', 'N/A')} TWD")
+    # Find details from results
+    favorite_data = next((item for item in results if item["Code"] == fav), None)
+    if favorite_data:
+        logger.info(f"  ✓ {fav}: {favorite_data.get('Name', 'N/A')} - Price: {favorite_data.get('Price', 'N/A')} TWD")
 
 # --- ENHANCED ROOT CAUSE ANALYSIS ---
 logger.info("\n📊 ENHANCED ROOT CAUSE ANALYSIS:")
-logger.info(f"Total in ket_qua: {len(ket_qua)} stocks")
-logger.info(f"Collected Mã codes: {sorted(collected_mã)}")
+logger.info(f"Total in results: {len(results)} stocks")
+logger.info(f"Collected Code codes: {sorted(collected_codes)}")
 logger.info(f"MY_FAVORITES: {MY_FAVORITES}")
 
 if missing_favorites:
-    logger.warning(f"\n⚠️ MISSING FROM ket_qua: {missing_favorites}")
+    logger.warning(f"\n⚠️ MISSING FROM results: {missing_favorites}")
     for fav in missing_favorites:
         # Find the full ticker code
         full_ticker = None
-        for ticker in DANH_SACH_MA:
+        for ticker in TICKER_LIST:
             if ticker.replace(".TWO", "").replace(".TW", "") == fav:
                 full_ticker = ticker
                 break
-        company_info = THONG_TIN_CO_PHIEU.get(full_ticker, {})
-        company_name = company_info.get("Ten", "Unknown")
-        sector = company_info.get("Nganh", "Unknown")
+        company_info = STOCK_INFO.get(full_ticker, {})
+        company_name = company_info.get("Name", "Unknown")
+        sector = company_info.get("Sector", "Unknown")
         
         # Check if it's in the full dataframe BEFORE filtering
         logger.warning(f"\n  Stock: {fav} ({full_ticker}) - {company_name} [{sector}]")
@@ -356,10 +356,25 @@ if missing_favorites:
 else:
     logger.info(f"✅ All {len(MY_FAVORITES)} favorite stocks collected successfully!")
 
-# --- 4. XUẤT FILE 4 TABS ---
-if ket_qua:
-    logger.info(f"📊 Creating Excel report with {len(ket_qua)} stocks...")
-    df_full = pd.DataFrame(ket_qua)
+# --- 4. EXPORT FILE WITH 4 TABS ---
+if results:
+    logger.info(f"📊 Creating Excel report with {len(results)} stocks...")
+    df_full = pd.DataFrame(results)
+    
+    # Rename columns to match Vietnamese names used throughout the code
+    df_full = df_full.rename(columns={
+        'Code': 'Mã',
+        'Name': 'Tên Công Ty',
+        'Name_CN': 'Tên Công Ty (CN)',
+        'Price': 'Giá',
+        'Pct_Day': '%_Ngày',
+        'Vol_vs_Avg': '%_Vol_vs_TB',
+        'Pct_1Month': '%_Tăng_1_Tháng',
+        'Signal': 'Tín_Hiệu_Ngày',
+        'Avg_Trading_Value_B': 'GTGD_TB_Tỷ',
+        'Money_Flow_Strength': 'Sức_Mạnh_Dòng_Tiền',
+        'ATR_Pct': 'ATR%'
+    })
     
     # Sort by different criteria for each sheet
     df_tab1 = df_full.sort_values(by='%_Vol_vs_TB', ascending=False)
@@ -370,16 +385,16 @@ if ket_qua:
     logger.info("🔍 CHECKING IF 'MISSING' FAVORITES ARE IN df_full (SHEETS 1 & 2):")
     logger.info("="*70)
     
-    collected_mã_full = set(df_full['Mã'].values)
+    collected_codes_full = set(df_full['Mã'].values)
     logger.info(f"\nTotal in df_full: {len(df_full)} stocks")
-    logger.info(f"Mã codes in df_full: {sorted(collected_mã_full)}")
+    logger.info(f"Mã codes in df_full: {sorted(collected_codes_full)}")
     
     # Re-check favorites against df_full
     truly_missing_from_df = []
     present_in_sheets_but_missing_from_favorites = []
     
     for fav in MY_FAVORITES:
-        if fav in collected_mã_full:
+        if fav in collected_codes_full:
             fav_row = df_full[df_full['Mã'] == fav].iloc[0]
             logger.info(f"  ✅ {fav}: {fav_row['Tên Công Ty']} - Price: {fav_row['Giá']} TWD")
             logger.info(f"     → FOUND in Sheet 1 & 2 (Sheets show all 40 stocks)")
@@ -403,27 +418,27 @@ if ket_qua:
         with pd.ExcelWriter(file_name, engine='openpyxl') as writer:
             # Sheet 1: Daily Signals (sorted by volume strength)
             df_tab1[['Mã', 'Tên Công Ty (CN)', 'Tên Công Ty', 'Giá', '%_Ngày', '%_Vol_vs_TB', 'Tín_Hiệu_Ngày', 'GTGD_TB_Tỷ']].to_excel(
-                writer, sheet_name='1_Tin_Hieu_Hom_Nay', index=False
+                writer, sheet_name='1_Daily_Signals', index=False
             )
             logger.debug("✅ Sheet 1 created: 1_Tin_Hieu_Hom_Nay")
             
             # Sheet 2: 21-day Trend (sorted by 1-month gain)
-            df_tab2[['Mã', 'Tên Công Ty (CN)', 'Tên Công Ty', 'Ngành', '%_Tăng_1_Tháng', 'Sức_Mạnh_Dòng_Tiền', 'GTGD_TB_Tỷ']].to_excel(
-                writer, sheet_name='2_Xu_Huong_21_Ngay', index=False
+            df_tab2[['Mã', 'Tên Công Ty (CN)', 'Tên Công Ty', 'Sector', '%_Tăng_1_Tháng', 'Sức_Mạnh_Dòng_Tiền', 'GTGD_TB_Tỷ']].to_excel(
+                writer, sheet_name='2_21Day_Trend', index=False
             )
             logger.debug("✅ Sheet 2 created: 2_Xu_Huong_21_Ngay")
             
             # Sheet 3: Sector Analysis
-            df_sector = df_full.groupby('Ngành').agg({
+            df_sector = df_full.groupby('Sector').agg({
                 '%_Tăng_1_Tháng': 'mean', 
                 'Sức_Mạnh_Dòng_Tiền': 'mean', 
                 'GTGD_TB_Tỷ': 'sum', 
                 'Mã': 'count'
             }).reset_index()
-            df_sector.columns = ['Ngành', 'Avg_%_1Tháng', 'Avg_Sức_Mạnh', 'GTGD_TB_Tỷ', 'Số_Mã']
-            df_sector = df_sector.sort_values(by='Avg_%_1Tháng', ascending=False)
+            df_sector.columns = ['Sector', 'Avg_Pct_1M', 'Avg_Money_Flow', 'GTGD_TB_Tỷ', 'Stock_Count']
+            df_sector = df_sector.sort_values(by='Avg_Pct_1M', ascending=False)
             df_sector.to_excel(
-                writer, sheet_name='3_Song_Nganh', index=False
+                writer, sheet_name='3_Industry_Analysis', index=False
             )
             logger.debug("✅ Sheet 3 created: 3_Song_Nganh")
             
@@ -462,7 +477,7 @@ if ket_qua:
                     'QUICK_ACTION'
                 ]
                 df_fav[fav_columns].to_excel(
-                    writer, sheet_name='4_My_Favorite', index=False
+                    writer, sheet_name='4_My_Favorites', index=False
                 )
                 fav_count = len(df_fav)
                 logger.info(f"\n✅ Sheet 4 created: 4_My_Favorite ({fav_count}/{len(MY_FAVORITES)} favorites)")
@@ -477,10 +492,10 @@ if ket_qua:
                 logger.info("="*70 + "\n")
         
         logger.info(f"✅✅✅ SUCCESS! File saved: {file_name}")
-        logger.info(f"📈 Report contains {len(df_full)} stocks across {len(df_full['Ngành'].unique())} sectors")
+        logger.info(f"📈 Report contains {len(df_full)} stocks across {len(df_full['Sector'].unique())} sectors")
         print(f"\n{'='*60}")
         print(f"✅✅✅ SUCCESS! Saved {len(df_full)} stocks to {file_name}")
-        print(f"📊 Sectors analyzed: {len(df_full['Ngành'].unique())}")
+        print(f"📊 Sectors analyzed: {len(df_full['Sector'].unique())}")
         print(f"⭐ Favorites tracked: {len(df_fav)}")
         print(f"{'='*60}\n")
         
