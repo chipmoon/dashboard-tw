@@ -99,7 +99,7 @@ jobs:
       # 9. CREATE ARTIFACT (Optional - For debugging)
       # ============================================================================
       - name: Upload Excel as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always() # Upload even if previous steps fail
         with:
           name: market-data-excel
