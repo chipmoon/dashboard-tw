@@ -28,7 +28,7 @@ jobs:
     - name: Run Scan Script
       run: |
         python stock_tw.py
-        python dashboard_tw_vn.py
+        python dashboard.py
 
     - name: Commit and Push changes
       run: |
